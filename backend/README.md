@@ -2,5 +2,5 @@
 
 ## FAST API 
 
-## MySQL
+## MySQL DB Markup
 ![TaskNova MySQL](./TaskNova-DB-Markup.JPG?raw=true)
