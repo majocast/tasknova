@@ -3,4 +3,4 @@
 ## FAST API 
 
 ## MySQL
-![TaskNova MySQL](https://github.com/majocast/tasknova/blob/backend/TaskNova-DB-Markup.JPG?raw=true)
+![TaskNova MySQL](./TaskNova-DB-Markup.JPG?raw=true)
