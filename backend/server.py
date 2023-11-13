@@ -121,8 +121,8 @@ class UserBase(BaseModel):
 
 class ProjectBase(BaseModel):
   name: str
-  owner_id = int
-  editors = Optional[List[int]] = None
+  owner_id: int
+  editors: List[int]
   description: Optional[str] = None
 
 
@@ -143,9 +143,10 @@ class EditedUser(BaseModel):
 
 class EditedProject(BaseModel):
   name: Optional[str] = None
-  owner_id = Optional[int]
-  editors = Optional[List[int]] = None
+  owner_id: Optional[int]
+  editors: Optional[List[int]] = None
   description: Optional[str] = None
+
 
 
 #ROUTES
