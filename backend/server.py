@@ -1,8 +1,24 @@
 from fastapi import FastAPI, HTTPException, Depends, status
-from typing import List, Optional
+from typing import List, Optional, Annotated
 from pydantic import BaseModel
+from database import engine, SessionLocal
+from sqlalchemy.orm import Session
+import models
 
+#app initialization
 app = FastAPI()
+models.Base.metadata.create_all(bind=engine)
+
+#database dependency
+def get_db():
+  db = SessionLocal()
+  try:
+    yield db
+  finally:
+    db.close()
+
+db_dependency = Annotated[Session, Depends(get_db)]
+
 
 #Testing JSON Objects
 testingUsers = {
