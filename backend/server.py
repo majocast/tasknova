@@ -155,50 +155,50 @@ def home():
 
 #USER ROUTES
 #login
-@app.get('/user')
+@app.get('/user', status_code=status.HTTP_200_OK)
 async def home(email: str, password: str):
     return {"Login": "Successful"}
 
 #registration
-@app.post('/user')
+@app.post('/user', status_code=status.HTTP_201_CREATED)
 async def register(user: UserBase):
   return {"Login": "Successful"}
 
 #edit user
-@app.post('/user/{user_id}')
+@app.put('/user/{user_id}', status_code=status.HTTP_200_OK)
 async def register(user_id: int, user: EditedUser):
-  return {"Login": "Successful"}
+  return {"Edited": "User"}
 
 #TASKS
-@app.get('/task/{project_id}')
+@app.get('/task/{project_id}', status_code=status.HTTP_200_OK)
 async def task(project_id: int):
   return {"Task": "Retrieved"}
 
-@app.post('/task/{project_id}')
+@app.post('/task/{project_id}', status_code=status.HTTP_201_CREATED)
 async def task(project_id: int, task: TaskBase):
   return {"Task": "Posted"}
 
-@app.delete('/task/{project_id}/{task_id}')
+@app.delete('/task/{project_id}/{task_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def task(project_id: int, task_id: int):
   return {"Task": "Deleted"}
 
-@app.put('/task/{project_id}/{task_id}')
+@app.put('/task/{project_id}/{task_id}', status_code=status.HTTP_200_OK)
 async def task(project_id: int, task_id: int, task: EditedTask):
   return {"Task": "Edited"}
 
 #PROJECTS
-@app.get('/project/{user_id}')
+@app.get('/project/{user_id}', status_code=status.HTTP_200_OK)
 async def project(user_id: int):
   return{"got": "projects"}
 
-@app.post('/project/{user_id}')
+@app.post('/project/{user_id}', status_code=status.HTTP_201_CREATED)
 async def project(user_id: int, project: ProjectBase):
   return{"posted": "projects"}
 
-@app.put('/project/{user_id}')
+@app.put('/project/{user_id}', status_code=status.HTTP_200_OK)
 async def project(user_id: int, project: EditedProject):
-  return{"editted": "projects"}
+  return{"edited": "projects"}
 
-@app.delete('/project/{project_id}/{user_id}')
+@app.delete('/project/{project_id}/{user_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def project(project_id: int, user_id: int):
   return{"deleted": "project"}
