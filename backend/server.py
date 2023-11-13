@@ -1,3 +1,4 @@
+#main server file that serves the db connection and handles routing
 from fastapi import FastAPI, HTTPException, Depends, status
 from typing import List, Optional, Annotated
 from pydantic import BaseModel
