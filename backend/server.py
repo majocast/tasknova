@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Depends, status
 from typing import List, Optional
 from pydantic import BaseModel
 
@@ -88,14 +88,14 @@ testingTasks = {
 }
 
 #CLASS MODELS
-class Task(BaseModel):
+class TaskBase(BaseModel):
   name: str
   project_id: int
   status: Optional[int] = None
   notes: str
 
 
-class User(BaseModel):
+class UserBase(BaseModel):
   name: Optional[str] = None
   username: Optional[str] = None
   email: str
@@ -103,7 +103,7 @@ class User(BaseModel):
   initVector: str
 
 
-class Project(BaseModel):
+class ProjectBase(BaseModel):
   name: str
   owner_id = int
   editors = Optional[List[int]] = None
@@ -140,49 +140,49 @@ def home():
 #USER ROUTES
 #login
 @app.get('/user')
-def home(email: str, password: str):
+async def home(email: str, password: str):
     return {"Login": "Successful"}
 
 #registration
 @app.post('/user')
-def register(user: User):
+async def register(user: UserBase):
   return {"Login": "Successful"}
 
 #edit user
 @app.post('/user/{user_id}')
-def register(user_id: int, user: EditedUser):
+async def register(user_id: int, user: EditedUser):
   return {"Login": "Successful"}
 
 #TASKS
 @app.get('/task/{project_id}')
-def task(project_id: int):
+async def task(project_id: int):
   return {"Task": "Retrieved"}
 
 @app.post('/task/{project_id}')
-def task(project_id: int, task: Task):
+async def task(project_id: int, task: TaskBase):
   return {"Task": "Posted"}
 
 @app.delete('/task/{project_id}/{task_id}')
-def task(project_id: int, task_id: int):
+async def task(project_id: int, task_id: int):
   return {"Task": "Deleted"}
 
 @app.put('/task/{project_id}/{task_id}')
-def task(project_id: int, task_id: int, task: EditedTask):
+async def task(project_id: int, task_id: int, task: EditedTask):
   return {"Task": "Edited"}
 
 #PROJECTS
 @app.get('/project/{user_id}')
-def project(user_id: int):
+async def project(user_id: int):
   return{"got": "projects"}
 
 @app.post('/project/{user_id}')
-def project(user_id: int, project: Project):
+async def project(user_id: int, project: ProjectBase):
   return{"posted": "projects"}
 
 @app.put('/project/{user_id}')
-def project(user_id: int, project: EditedProject):
+async def project(user_id: int, project: EditedProject):
   return{"editted": "projects"}
 
 @app.delete('/project/{project_id}/{user_id}')
-def project(project_id: int, user_id: int):
+async def project(project_id: int, user_id: int):
   return{"deleted": "project"}
