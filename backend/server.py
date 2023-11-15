@@ -39,89 +39,6 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 prepopulate_status()
 
-#Testing JSON Objects
-testingUsers = {
-  1: {
-    'user_id': 1,
-    'name': 'Marc',
-    'username': 'majocast',
-    'email': 'test@mail.com',
-    'password': '1234',
-    'initVector': 'hfaskdacnsdla',
-  },
-  2: {
-    'user_id': 2,
-    'name': 'Abby',
-    'username': 'apasghtetti',
-    'email': 'test2@mail.com',
-    'password': '1234',
-    'initVector': 'aahasbvlavasdiu',
-  },
-  3: {
-    'user_id': 2,
-    'name': 'Angela',
-    'username': 'puffdaddy',
-    'email': 'test3@mail.com',
-    'password': '1234',
-    'initVector': 'jiovhdflia',
-  }
-}
-
-testingProjects = {
-  1: {
-    'project_id': 1,
-    'name': 'Stuff',
-    'owner_id': 2,
-    'editors': [1],
-    'description': 'get er done'
-  },
-  2: {
-    'project_id': 2,
-    'name': 'Stuff2',
-    'owner_id': 2,
-    'editors': [1, 3],
-    'description': 'get er done'
-  },
-  3: {
-    'project_id': 3,
-    'name': 'Stuff3',
-    'owner_id': 1,
-    'editors': [2, 3],
-    'description': 'get er done'
-  }
-}
-
-testingTasks = {
-  1: {
-    'task_id': 1,
-    'project_id': 2,
-    'name': 'Hello',
-    'status': 2,
-    'notes': 'get er done'
-  },
-  2: {
-    'task_id': 2,
-    'project_id': 2,
-    'name': 'Hello Again',
-    'status': 1,
-    'notes': 'get er done now'
-  },
-  3: {
-    'task_id': 3,
-    'project_id': 1,
-    'name': 'Hello',
-    'status': 3,
-    'notes': 'get er done right now'
-  },
-  4: {
-    'task_id': 4,
-    'project_id': 3,
-    'name': 'Hello there',
-    'status': 1,
-    'notes': 'get er done right now now'
-  }
-}
-
 #CLASS MODELS
 class TaskBase(BaseModel):
   name: str
@@ -135,7 +52,6 @@ class UserBase(BaseModel):
   username: Optional[str] = None
   email: str
   password: str
-  initVector: str
 
 
 class ProjectBase(BaseModel):
@@ -157,7 +73,6 @@ class EditedUser(BaseModel):
   username: Optional[str] = None
   email: Optional[str] = None
   password: Optional[str] = None
-  initVector: Optional[str] = None
 
 
 class EditedProject(BaseModel):
@@ -176,8 +91,15 @@ def home():
 #USER ROUTES
 #login
 @app.get('/user', status_code=status.HTTP_200_OK)
-async def home(email: str, password: str):
-    return {"Login": "Successful"}
+async def home(email: str, password: str, db: db_dependency):
+    user = db.query(models.User).filter(models.User.email == email).first()
+    if user is not None:
+      if user.password == password:
+        return user
+      else:
+        raise HTTPException(status_code=401, detail='Incorrect Email or Password')
+    else:
+      raise HTTPException(status_code=404, detail='email not registered')
 
 #registration
 @app.post('/user', status_code=status.HTTP_201_CREATED)
