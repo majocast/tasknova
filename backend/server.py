@@ -92,24 +92,28 @@ def home():
 #login
 @app.get('/user', status_code=status.HTTP_200_OK)
 async def home(email: str, password: str, db: db_dependency):
-    user = db.query(models.User).filter(models.User.email == email).first()
-    if user is not None:
-      if user.password == password:
-        return user
-      else:
-        raise HTTPException(status_code=401, detail='Incorrect Email or Password')
+  user = db.query(models.User).filter(models.User.email == email).first()
+  if user is not None:
+    if user.password == password:
+      return user
     else:
-      raise HTTPException(status_code=404, detail='email not registered')
+      raise HTTPException(status_code=401, detail='Incorrect Email or Password')
+  else:
+    raise HTTPException(status_code=404, detail='email not registered')
 
 #registration
 @app.post('/user', status_code=status.HTTP_201_CREATED)
-async def register(user: UserBase):
-  return {"Login": "Successful"}
+async def register(user: UserBase, db: db_dependency):
+  user_db = models.User(**user.model_dump())
+  db.add(user_db)
+  db.commit()
+  
 
 #edit user
 @app.put('/user/{user_id}', status_code=status.HTTP_200_OK)
 async def register(user_id: int, user: EditedUser):
   return {"Edited": "User"}
+
 
 #TASKS
 @app.get('/task/{project_id}', status_code=status.HTTP_200_OK)
