@@ -44,7 +44,7 @@ class TaskBase(BaseModel):
   name: str
   project_id: int
   status: Optional[int] = None
-  notes: str
+  description: str
 
 
 class UserBase(BaseModel):
@@ -57,7 +57,6 @@ class UserBase(BaseModel):
 class ProjectBase(BaseModel):
   name: str
   owner_id: int
-  editors: List[int]
   description: Optional[str] = None
 
 
@@ -65,7 +64,7 @@ class ProjectBase(BaseModel):
 class EditedTask(BaseModel):
   name: Optional[str] = None
   status: Optional[int] = None
-  notes: Optional[int] = None
+  description: Optional[int] = None
 
 
 class EditedUser(BaseModel):
@@ -78,7 +77,6 @@ class EditedUser(BaseModel):
 class EditedProject(BaseModel):
   name: Optional[str] = None
   owner_id: Optional[int]
-  editors: Optional[List[int]] = None
   description: Optional[str] = None
 
 
@@ -130,12 +128,16 @@ async def add_task(task: TaskBase, db: db_dependency):
   db_task = models.Task(**task.model_dump())
   db.add(db_task)
   db.commit()
-  return db_task
+  return task
 
 
 @app.delete('/task/{project_id}/{task_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_task(project_id: int, task_id: int, db: db_dependency):
-  return {"Task": "Deleted"}
+  (
+    db.delete(models.Task)
+    .where(models.Task.project_id == project_id and models.Task.task_id == task_id)
+    .execution_options(synchronize_session='fetch')
+  )
 
 
 @app.put('/task/{project_id}/{task_id}', status_code=status.HTTP_200_OK)
@@ -149,9 +151,12 @@ async def get_projects(user_id: int, db: db_dependency):
   projects = db.query(models.Project).filter(models.Project.owner_id == user_id).all()
   return projects
 
-@app.post('/project/{user_id}', status_code=status.HTTP_201_CREATED)
-async def add_project(user_id: int, project: ProjectBase, db: db_dependency):
-  return{"posted": "projects"}
+@app.post('/project', status_code=status.HTTP_201_CREATED)
+async def add_project(project: ProjectBase, db: db_dependency):
+  db_project = models.Project(**project.model_dump())
+  db.add(db_project)
+  db.commit()
+  return project
 
 
 @app.put('/project/{user_id}', status_code=status.HTTP_200_OK)
