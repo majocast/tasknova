@@ -4,7 +4,7 @@ from typing import List, Optional, Annotated
 from pydantic import BaseModel
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
-from sqlalchemy import update
+from sqlalchemy import insert
 import models
 
 #app initialization
@@ -136,6 +136,7 @@ async def edit_user(user_id: int, user: EditedUser, db: db_dependency):
 @app.get('/task/{project_id}', status_code=status.HTTP_200_OK) #done
 async def get_tasks(project_id: int, db: db_dependency):
   tasks = db.query(models.Task).filter(models.Task.project_id == project_id).all()
+  #we do not do error handling for empty tasks because the array can be empty on return
   return tasks
 
 
@@ -183,6 +184,7 @@ async def edit_task(task_id: int, task: EditedTask, db: db_dependency):
 @app.get('/project/{project_id}/{user_id}', status_code=status.HTTP_200_OK) #done
 async def get_projects(project_id: int, user_id: int, db: db_dependency):
   projects = db.query(models.Project).filter(models.Project.owner_id == user_id).all()
+  #empty projects arrays can be returned as well
   return projects
 
 @app.post('/project', status_code=status.HTTP_201_CREATED) #done
@@ -236,3 +238,40 @@ async def delete_project(project_id: int, db: db_dependency):
   #deleting project, and (if they exist) editors and tasks associated
   db.delete(db_project)
   db.commit()
+
+#EDITORS
+@app.get('/editors/{project_id}', status_code=status.HTTP_200_OK)
+async def get_editors(project_id: int, db: db_dependency):
+  db_editors = db.query(models.project_editors).filter(models.project_editors.c.project_id == project_id).all()
+  #okay to return empty array
+  return db_editors
+
+
+@app.post('/editors/{project_id}/{user_id}', status_code=status.HTTP_201_CREATED)
+async def add_editor(project_id: int, user_id: int, db: db_dependency):
+  new_editor = {
+    "user_id": user_id,
+    "project_id": project_id
+  }
+
+  db.execute(models.project_editors.insert().values(new_editor))
+  db.commit()
+  return new_editor
+
+
+#deleting individual user from editors on project
+@app.delete('/editors/{project_id}/{user_id}', status_code=status.HTTP_204_NO_CONTENT)
+async def get_editors(project_id: int, user_id: int, db: db_dependency):
+  db_editor = (db.query(models.project_editors)
+                .filter(
+                  models.project_editors.c.project_id == project_id,
+                  models.project_editors.c.user_id == user_id,
+                )
+                .all()
+              )
+  if not db_editor:
+    raise HTTPException(status_code=404, detail="Editor Not Found")
+  db.delete(db_editor)
+  db.commit()
+  #okay to return empty array
+  return db_editor
