@@ -77,7 +77,7 @@ class EditedUser(BaseModel):
 
 class EditedProject(BaseModel):
   name: Optional[str] = None
-  owner_id: Optional[int]
+  owner_id: Optional[int] = None
   description: Optional[str] = None
 
 
@@ -156,7 +156,7 @@ async def delete_task(project_id: int, task_id: int, db: db_dependency):
   db.commit()
   
 
-@app.put('/task/{task_id}', status_code=status.HTTP_200_OK)
+@app.put('/task/{task_id}', status_code=status.HTTP_200_OK) #done
 async def edit_task(task_id: int, task: EditedTask, db: db_dependency):
   update_values = {}
   if task.username:
@@ -193,9 +193,26 @@ async def add_project(project: ProjectBase, db: db_dependency):
   return project
 
 
-@app.put('/project/{user_id}', status_code=status.HTTP_200_OK) 
-async def edit_project(user_id: int, project: EditedProject, db: db_dependency):
-  return{"edited": "projects"}
+@app.put('/project/{project_id}', status_code=status.HTTP_200_OK) #done
+async def edit_project(project_id: int, project: EditedProject, db: db_dependency):
+  update_values = {}
+  if project.name:
+    update_values['name'] = project.name
+  if project.owner_id:
+    update_values['owner_id'] = project.owner_id
+  if project.description:
+    update_values['description'] = project.description
+  
+  if not update_values:
+    raise HTTPException(status_code=400, detail='No fields to update')
+
+  db_project = db.query(models.Project).filter(models.Project.id == project_id).first()
+  if db_project is None:
+    raise HTTPException(status_code=404, detail='Project Not Found')
+  
+  db.query(models.Project).filter(models.Project.id == project_id).update(update_values)
+  db.commit()
+  return db_project
 
 
 @app.delete('/project/{project_id}', status_code=status.HTTP_204_NO_CONTENT) #done
