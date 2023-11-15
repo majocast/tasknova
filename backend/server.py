@@ -4,7 +4,7 @@ from typing import List, Optional, Annotated
 from pydantic import BaseModel
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import update
 import models
 
 #app initialization
@@ -89,7 +89,7 @@ def home():
 
 #USER ROUTES
 #login
-@app.get('/user', status_code=status.HTTP_200_OK)
+@app.get('/user', status_code=status.HTTP_200_OK) #done
 async def login_user(email: str, password: str, db: db_dependency):
   user = db.query(models.User).filter(models.User.email == email).first()
   if user is not None:
@@ -102,7 +102,7 @@ async def login_user(email: str, password: str, db: db_dependency):
 
 
 #registration
-@app.post('/user', status_code=status.HTTP_201_CREATED)
+@app.post('/user', status_code=status.HTTP_201_CREATED) #done
 async def register_user(user: UserBase, db: db_dependency):
   db_user = models.User(**user.model_dump())
   db.add(db_user)
@@ -111,19 +111,35 @@ async def register_user(user: UserBase, db: db_dependency):
   
 
 #edit user
-@app.put('/user/{user_id}', status_code=status.HTTP_200_OK)
+@app.put('/user/{user_id}', status_code=status.HTTP_200_OK) #done
 async def edit_user(user_id: int, user: EditedUser, db: db_dependency):
-  return user
+  update_values = {}
+  if user.username:
+      update_values['username'] = user.username
+  if user.password:
+      update_values['password'] = user.password
+  
+  if not update_values:
+      raise HTTPException(status_code=400, detail="No fields to update")
+
+  db_user = db.query(models.User).filter(models.User.id == user_id).first()
+  if db_user is None:
+      raise HTTPException(status_code=404, detail='User Not Found')
+
+  db.query(models.User).filter(models.User.id == user_id).update(update_values)
+  db.commit()
+
+  return {'message': 'User updated successfully'}
 
 
 #TASKS
-@app.get('/task/{project_id}', status_code=status.HTTP_200_OK)
+@app.get('/task/{project_id}', status_code=status.HTTP_200_OK) #done
 async def get_tasks(project_id: int, db: db_dependency):
   tasks = db.query(models.Task).filter(models.Task.project_id == project_id).all()
   return tasks
 
 
-@app.post('/task', status_code=status.HTTP_201_CREATED)
+@app.post('/task', status_code=status.HTTP_201_CREATED) #done
 async def add_task(task: TaskBase, db: db_dependency):
   db_task = models.Task(**task.model_dump())
   db.add(db_task)
@@ -131,7 +147,7 @@ async def add_task(task: TaskBase, db: db_dependency):
   return task
 
 
-@app.delete('/task/{project_id}/{task_id}', status_code=status.HTTP_204_NO_CONTENT)
+@app.delete('/task/{project_id}/{task_id}', status_code=status.HTTP_204_NO_CONTENT) #done
 async def delete_task(project_id: int, task_id: int, db: db_dependency):
   db_task = db.query(models.Task).filter(models.Task.id == task_id and models.Task.project_id == project_id).first()
   if db_task is None:
@@ -140,18 +156,36 @@ async def delete_task(project_id: int, task_id: int, db: db_dependency):
   db.commit()
   
 
-@app.put('/task/{project_id}/{task_id}', status_code=status.HTTP_200_OK)
-async def edit_task(project_id: int, task_id: int, task: EditedTask, db: db_dependency):
-  return task
+@app.put('/task/{task_id}', status_code=status.HTTP_200_OK)
+async def edit_task(task_id: int, task: EditedTask, db: db_dependency):
+  update_values = {}
+  if task.username:
+      update_values['username'] = task.username
+  if task.status:
+      update_values['status'] = task.status
+  if task.description:
+      update_values['description'] = task.description
+  
+  if not update_values:
+      raise HTTPException(status_code=400, detail="No fields to update")
+
+  db_user = db.query(models.Task).filter(models.Task.id == task_id).first()
+  if db_user is None:
+      raise HTTPException(status_code=404, detail='User Not Found')
+
+  db.query(models.Task).filter(models.Task.id == task_id).update(update_values)
+  db.commit()
+
+  return {'message': 'User updated successfully'}
 
 
 #PROJECTS
-@app.get('/project/{user_id}', status_code=status.HTTP_200_OK)
-async def get_projects(user_id: int, db: db_dependency):
+@app.get('/project/{project_id}/{user_id}', status_code=status.HTTP_200_OK) #done
+async def get_projects(project_id: int, user_id: int, db: db_dependency):
   projects = db.query(models.Project).filter(models.Project.owner_id == user_id).all()
   return projects
 
-@app.post('/project', status_code=status.HTTP_201_CREATED)
+@app.post('/project', status_code=status.HTTP_201_CREATED) #done
 async def add_project(project: ProjectBase, db: db_dependency):
   db_project = models.Project(**project.model_dump())
   db.add(db_project)
@@ -159,12 +193,12 @@ async def add_project(project: ProjectBase, db: db_dependency):
   return project
 
 
-@app.put('/project/{user_id}', status_code=status.HTTP_200_OK)
+@app.put('/project/{user_id}', status_code=status.HTTP_200_OK) 
 async def edit_project(user_id: int, project: EditedProject, db: db_dependency):
   return{"edited": "projects"}
 
 
-@app.delete('/project/{project_id}', status_code=status.HTTP_204_NO_CONTENT)
+@app.delete('/project/{project_id}', status_code=status.HTTP_204_NO_CONTENT) #done
 async def delete_project(project_id: int, db: db_dependency):
   db_project = db.query(models.Project).filter(models.Project.id == project_id).first()
   if db_project is None:
