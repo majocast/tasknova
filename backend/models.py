@@ -14,6 +14,7 @@ project_editors = Table(
 # ^ many editors can be editors to many projects
 #back populates are used to handle the navigate and manage the relationship
 
+
 class User(Base):
   __tablename__ = 'users'
   id = Column(Integer, primary_key=True, index=True)
@@ -27,6 +28,7 @@ class User(Base):
   editor_to_project = relationship('Project', secondary=project_editors, back_populates='editors')
   # a user can be an editor to many projects
 
+
 class Project(Base):
   __tablename__ = 'projects'
   id = Column(Integer, primary_key=True, index=True)
@@ -39,6 +41,7 @@ class Project(Base):
   tasks = relationship('Task', back_populates='project')  #a project can own many tasks
   editors = relationship('User', secondary=project_editors, back_populates='editor_to_project')
   # ^ a project can have many editors of user_ids
+  
 
 class Task(Base):
   __tablename__ = 'tasks'
@@ -55,4 +58,4 @@ class Task(Base):
 class Status(Base):
   __tablename__ = 'statuses'
   id = Column(Integer, primary_key=True, index=True)
-  status = Column(String(15))
+  status = Column(String(15), unique=True)

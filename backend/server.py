@@ -10,6 +10,23 @@ import models
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
 
+#helper function to prepopulate statuses table if empty for whatever reason
+def prepopulate_status():
+  db = next(get_db()) #next or __next__ is used to get the next yieldable value in a generative function
+  #in this case, next() will provide the next database session
+  statuses = db.query(models.Status).first() #db.query returns Query object, to retrieve results
+                                           # we use .all() or .first() to execute the query
+                                           # kind of like processing a promise 
+  if statuses is None:
+    not_started = models.Status(status='Not Started')
+    in_progress = models.Status(status='In Progress')
+    under_review = models.Status(status='Under Review')
+    completed = models.Status(status='Completed')
+
+    db.add_all([not_started, in_progress, under_review, completed])
+    db.commit()
+  
+
 #database dependency
 def get_db():
   db = SessionLocal()
@@ -20,6 +37,7 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+prepopulate_status()
 
 #Testing JSON Objects
 testingUsers = {
