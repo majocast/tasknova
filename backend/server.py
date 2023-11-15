@@ -134,12 +134,12 @@ async def add_task(task: TaskBase, db: db_dependency):
 
 
 @app.delete('/task/{project_id}/{task_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_task(project_id: int, task_id: int):
+async def delete_task(project_id: int, task_id: int, db: db_dependency):
   return {"Task": "Deleted"}
 
 
 @app.put('/task/{project_id}/{task_id}', status_code=status.HTTP_200_OK)
-async def edit_task(project_id: int, task_id: int, task: EditedTask):
+async def edit_task(project_id: int, task_id: int, task: EditedTask, db: db_dependency):
   return {"Task": "Edited"}
 
 
@@ -150,15 +150,15 @@ async def get_projects(user_id: int, db: db_dependency):
   return projects
 
 @app.post('/project/{user_id}', status_code=status.HTTP_201_CREATED)
-async def add_project(user_id: int, project: ProjectBase):
+async def add_project(user_id: int, project: ProjectBase, db: db_dependency):
   return{"posted": "projects"}
 
 
 @app.put('/project/{user_id}', status_code=status.HTTP_200_OK)
-async def edit_project(user_id: int, project: EditedProject):
+async def edit_project(user_id: int, project: EditedProject, db: db_dependency):
   return{"edited": "projects"}
 
 
 @app.delete('/project/{project_id}/{user_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_project(project_id: int, user_id: int):
+async def delete_project(project_id: int, user_id: int, db: db_dependency):
   return{"deleted": "project"}
