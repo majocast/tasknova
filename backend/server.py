@@ -108,13 +108,14 @@ async def register_user(user: UserBase, db: db_dependency):
   db_user = models.User(**user.model_dump())
   db.add(db_user)
   db.commit()
+  return db_user
   
 
 #edit user
 @app.put('/user/{user_id}', status_code=status.HTTP_200_OK)
 async def edit_user(user_id: int, user: EditedUser, db: db_dependency):
   db_user = db.query(models.User).filter(models.User.user_id == user_id).first()
-  return {}
+  return {"Edited": "User"}
 
 
 #TASKS
@@ -124,9 +125,12 @@ async def get_tasks(project_id: int, db: db_dependency):
   return tasks
 
 
-@app.post('/task/{project_id}', status_code=status.HTTP_201_CREATED)
-async def add_task(project_id: int, task: TaskBase):
-  return {"Task": "Posted"}
+@app.post('/task', status_code=status.HTTP_201_CREATED)
+async def add_task(task: TaskBase, db: db_dependency):
+  db_task = models.Task(**task.model_dump())
+  db.add(db_task)
+  db.commit()
+  return db_task
 
 
 @app.delete('/task/{project_id}/{task_id}', status_code=status.HTTP_204_NO_CONTENT)
@@ -141,9 +145,9 @@ async def edit_task(project_id: int, task_id: int, task: EditedTask):
 
 #PROJECTS
 @app.get('/project/{user_id}', status_code=status.HTTP_200_OK)
-async def get_projects(user_id: int):
-  return{"got": "projects"}
-
+async def get_projects(user_id: int, db: db_dependency):
+  projects = db.query(models.Project).filter(models.Project.owner_id == user_id).all()
+  return projects
 
 @app.post('/project/{user_id}', status_code=status.HTTP_201_CREATED)
 async def add_project(user_id: int, project: ProjectBase):
