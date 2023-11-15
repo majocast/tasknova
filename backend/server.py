@@ -4,6 +4,7 @@ from typing import List, Optional, Annotated
 from pydantic import BaseModel
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 import models
 
 #app initialization
@@ -97,7 +98,7 @@ async def login_user(email: str, password: str, db: db_dependency):
     else:
       raise HTTPException(status_code=401, detail='Incorrect Email or Password')
   else:
-    raise HTTPException(status_code=404, detail='email not registered')
+    raise HTTPException(status_code=404, detail='Email Not Registered')
 
 
 #registration
@@ -112,8 +113,7 @@ async def register_user(user: UserBase, db: db_dependency):
 #edit user
 @app.put('/user/{user_id}', status_code=status.HTTP_200_OK)
 async def edit_user(user_id: int, user: EditedUser, db: db_dependency):
-  db_user = db.query(models.User).filter(models.User.user_id == user_id).first()
-  return {"Edited": "User"}
+  return user
 
 
 #TASKS
@@ -133,16 +133,16 @@ async def add_task(task: TaskBase, db: db_dependency):
 
 @app.delete('/task/{project_id}/{task_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_task(project_id: int, task_id: int, db: db_dependency):
-  (
-    db.delete(models.Task)
-    .where(models.Task.project_id == project_id and models.Task.task_id == task_id)
-    .execution_options(synchronize_session='fetch')
-  )
-
+  db_task = db.query(models.Task).filter(models.Task.id == task_id and models.Task.project_id == project_id).first()
+  if db_task is None:
+    raise HTTPException(status_code=404, detail='Task Not Found')
+  db.delete(db_task)
+  db.commit()
+  
 
 @app.put('/task/{project_id}/{task_id}', status_code=status.HTTP_200_OK)
 async def edit_task(project_id: int, task_id: int, task: EditedTask, db: db_dependency):
-  return {"Task": "Edited"}
+  return task
 
 
 #PROJECTS
@@ -164,6 +164,24 @@ async def edit_project(user_id: int, project: EditedProject, db: db_dependency):
   return{"edited": "projects"}
 
 
-@app.delete('/project/{project_id}/{user_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_project(project_id: int, user_id: int, db: db_dependency):
-  return{"deleted": "project"}
+@app.delete('/project/{project_id}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_project(project_id: int, db: db_dependency):
+  db_project = db.query(models.Project).filter(models.Project.id == project_id).first()
+  if db_project is None:
+    raise HTTPException(status_code=404, detail='Project Not Found')
+  
+  #cleaning up project editors in project_editors relation table
+  db_editors = db.query(models.project_editors).filter(models.project_editors.c.project_id == project_id).all()
+  if db_editors:
+    for editor in db_editors:
+      db.delete(editor)
+  
+  #cleaning up tasks if they exist
+  db_tasks = db.query(models.Task).filter(models.Task.project_id == project_id).all()
+  if db_tasks:
+    for task in db_tasks:
+      db.delete(task)
+
+  #deleting project, and (if they exist) editors and tasks associated
+  db.delete(db_project)
+  db.commit()
