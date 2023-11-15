@@ -91,7 +91,7 @@ def home():
 #USER ROUTES
 #login
 @app.get('/user', status_code=status.HTTP_200_OK)
-async def home(email: str, password: str, db: db_dependency):
+async def login_user(email: str, password: str, db: db_dependency):
   user = db.query(models.User).filter(models.User.email == email).first()
   if user is not None:
     if user.password == password:
@@ -101,50 +101,60 @@ async def home(email: str, password: str, db: db_dependency):
   else:
     raise HTTPException(status_code=404, detail='email not registered')
 
+
 #registration
 @app.post('/user', status_code=status.HTTP_201_CREATED)
-async def register(user: UserBase, db: db_dependency):
-  user_db = models.User(**user.model_dump())
-  db.add(user_db)
+async def register_user(user: UserBase, db: db_dependency):
+  db_user = models.User(**user.model_dump())
+  db.add(db_user)
   db.commit()
   
 
 #edit user
 @app.put('/user/{user_id}', status_code=status.HTTP_200_OK)
-async def register(user_id: int, user: EditedUser):
-  return {"Edited": "User"}
+async def edit_user(user_id: int, user: EditedUser, db: db_dependency):
+  db_user = db.query(models.User).filter(models.User.user_id == user_id).first()
+  return {}
 
 
 #TASKS
 @app.get('/task/{project_id}', status_code=status.HTTP_200_OK)
-async def task(project_id: int):
-  return {"Task": "Retrieved"}
+async def get_tasks(project_id: int, db: db_dependency):
+  tasks = db.query(models.Task).filter(models.Task.project_id == project_id).all()
+  return tasks
+
 
 @app.post('/task/{project_id}', status_code=status.HTTP_201_CREATED)
-async def task(project_id: int, task: TaskBase):
+async def add_task(project_id: int, task: TaskBase):
   return {"Task": "Posted"}
 
+
 @app.delete('/task/{project_id}/{task_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def task(project_id: int, task_id: int):
+async def delete_task(project_id: int, task_id: int):
   return {"Task": "Deleted"}
 
+
 @app.put('/task/{project_id}/{task_id}', status_code=status.HTTP_200_OK)
-async def task(project_id: int, task_id: int, task: EditedTask):
+async def edit_task(project_id: int, task_id: int, task: EditedTask):
   return {"Task": "Edited"}
+
 
 #PROJECTS
 @app.get('/project/{user_id}', status_code=status.HTTP_200_OK)
-async def project(user_id: int):
+async def get_projects(user_id: int):
   return{"got": "projects"}
 
+
 @app.post('/project/{user_id}', status_code=status.HTTP_201_CREATED)
-async def project(user_id: int, project: ProjectBase):
+async def add_project(user_id: int, project: ProjectBase):
   return{"posted": "projects"}
 
+
 @app.put('/project/{user_id}', status_code=status.HTTP_200_OK)
-async def project(user_id: int, project: EditedProject):
+async def edit_project(user_id: int, project: EditedProject):
   return{"edited": "projects"}
 
+
 @app.delete('/project/{project_id}/{user_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def project(project_id: int, user_id: int):
+async def delete_project(project_id: int, user_id: int):
   return{"deleted": "project"}
