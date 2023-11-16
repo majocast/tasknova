@@ -4,7 +4,6 @@ from typing import List, Optional, Annotated
 from pydantic import BaseModel
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
-from sqlalchemy import insert
 import models
 
 #app initialization
@@ -129,7 +128,7 @@ async def edit_user(user_id: int, user: EditedUser, db: db_dependency):
   db.query(models.User).filter(models.User.id == user_id).update(update_values)
   db.commit()
 
-  return {'message': 'User updated successfully'}
+  return db_user
 
 
 #TASKS
@@ -145,7 +144,7 @@ async def add_task(task: TaskBase, db: db_dependency):
   db_task = models.Task(**task.model_dump())
   db.add(db_task)
   db.commit()
-  return task
+  return db_task
 
 
 @app.delete('/task/{project_id}/{task_id}', status_code=status.HTTP_204_NO_CONTENT) #done
@@ -174,10 +173,10 @@ async def edit_task(task_id: int, task: EditedTask, db: db_dependency):
   if db_user is None:
       raise HTTPException(status_code=404, detail='User Not Found')
 
-  db.query(models.Task).filter(models.Task.id == task_id).update(update_values)
+  db_task = db.query(models.Task).filter(models.Task.id == task_id).update(update_values)
   db.commit()
 
-  return {'message': 'User updated successfully'}
+  return db_task
 
 
 #PROJECTS
@@ -192,7 +191,7 @@ async def add_project(project: ProjectBase, db: db_dependency):
   db_project = models.Project(**project.model_dump())
   db.add(db_project)
   db.commit()
-  return project
+  return db_project
 
 
 @app.put('/project/{project_id}', status_code=status.HTTP_200_OK) #done
@@ -238,6 +237,7 @@ async def delete_project(project_id: int, db: db_dependency):
   #deleting project, and (if they exist) editors and tasks associated
   db.delete(db_project)
   db.commit()
+
 
 #EDITORS
 @app.get('/editors/{project_id}', status_code=status.HTTP_200_OK)
