@@ -15,13 +15,13 @@ function NavBar() {
           <div>TaskNova</div>
           {loggedIn ? 
             <div>
-              <div>Login</div>
-              <div>Register</div>
+              <p>My Space</p>
+              <p>Register</p>
             </div>
             :
             <div>
-              <p>My Space</p>
-              <p>Register</p>
+              <div>Login</div>
+              <div>Register</div>
             </div>
           }
         </nav>
