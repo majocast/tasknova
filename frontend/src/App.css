@@ -5,12 +5,40 @@
   text-align: center;
 }
 
+nav {
+  height: 5rem;
+  font-size: 1.25rem;
+  color: #F0F0F0;
+  align-items: center;
+  width: 100%;
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #151515; /* Change the background color to your preference */
+  justify-content: space-between;
+  border-radius: 0rem 0rem 0.625rem 0.625rem;
+  background: #151515;
+  box-shadow: 0px 0px 25px 10px rgba(149, 0, 219, 0.75);
+}
+
+nav > * {
+  margin: 0 10vw;
+}
+
+nav div {
+  display: flex;
+  gap: 2rem;
+}
+
 .landing-page {
   height: 100%;
   width: 100%;
   display: flex;
+  gap: 2rem;
   justify-content: center;
   align-items: center;
+  transform: translateY(-2rem);
 }
 
 #home-landing {
@@ -19,24 +47,28 @@
 }
 
 .landing-text {
+  text-align: start;
   display: flex;
-  width: 41.5625rem;
-  height: 17.01025rem;
+  gap: 0;
+  max-width: 50%;
   flex-direction: column;
   justify-content: center;
   flex-shrink: 0;
+  text-wrap:wrap;
 }
 
 .landing-text {
-  font-family: Space Mono;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
 }
 
-.landing-text h1 {
+.landing-text * {
+  margin: 0.5rem 0;
   color: #F0F0F0;
-  font-family: Space Mono;
+}
+
+.landing-text h1 {
   font-size: 3rem;
   font-style: normal;
   font-weight: 700;
@@ -44,10 +76,17 @@
 }
 
 .landing-text h3 {
-  color: #F0F0F0;
   font-size: 1.5rem;
 }
 
 .landing-text span {
   color: #13B6A7;
+  font-weight: 700;
+}
+
+.landing-text button {
+  background: #151515;
+  width: 11.625rem;
+  height: 2.9375rem;
+  flex-shrink: 0;
 }
