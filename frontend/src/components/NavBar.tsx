@@ -9,7 +9,7 @@ const NavBar: React.FC<MyNavBarProps> = ({ user_id }) => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    if(user_id) setLoggedIn(true)
+    if(user_id) setLoggedIn(true);
   }, [user_id])
 
   return (
