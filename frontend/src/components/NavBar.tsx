@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-
 function NavBar() {
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -12,16 +11,16 @@ function NavBar() {
   return (
     <>
       <nav>
-          <div>TaskNova</div>
+          <Link to='/'>TaskNova</Link>
           {loggedIn ? 
             <div>
-              <p>My Space</p>
-              <p>Register</p>
+              <Link to={`/space/1`}>My Space</Link>
+              <Link to={`/account/1`}>Account</Link>
             </div>
             :
             <div>
-              <div>Login</div>
-              <div>Register</div>
+              <Link to={`/login`}>Login</Link>
+              <Link to={`/register`}>Get Started</Link>
             </div>
           }
         </nav>

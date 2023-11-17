@@ -1,31 +1,27 @@
 import './App.css'
-import Lottie from 'lottie-react';
-import { useState, useEffect } from 'react';
-import spaceman from './assets/spaceman.json';
 import NavBar from './components/NavBar';
-import { Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Credentials from './pages/Credentials';
 
 function App() {
+  const routes = [
+    {path: '/', component: Home},
+    {path: '/login', component: Credentials},
+    {path: '/register', component: Credentials}
+  ]
 
   return (
-    <>
+    <BrowserRouter>
       <div className='app'>
         <NavBar />
-        <section className='landing-page'>
-          <article className='landing-text'>
-            <h1><span>TaskNova</span> brings teams together, near and far.</h1>
-            <h3>Efficient <span>project management</span> from one galaxy to the next.</h3>
-            <button>Get Started</button>
-          </article>
-          <Lottie
-            id='home-landing'
-            animationData={spaceman}
-            loop
-            autoplay
-          />
-        </section>
+        <Routes>
+          {routes.map((route) => {
+            return (<Route key={route.path} path={route.path} element={<route.component />} />)
+          })}
+        </Routes>
       </div>
-    </>
+    </BrowserRouter>
   )
 }
 

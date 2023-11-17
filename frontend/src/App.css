@@ -3,6 +3,17 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  font-weight: 700;
+}
+
+a {
+  color: #F0F0F0;
+  text-decoration: inherit;
+  transition: 0.2s ease-in-out;
+}
+
+a:hover {
+  color: rgba(149, 0, 219, 0.75);
 }
 
 nav {
@@ -41,11 +52,6 @@ nav div {
   transform: translateY(-2rem);
 }
 
-#home-landing {
-  height: 40rem;
-  width: 40rem;
-}
-
 .landing-text {
   text-align: start;
   display: flex;
@@ -59,7 +65,6 @@ nav div {
 
 .landing-text {
   font-style: normal;
-  font-weight: 700;
   line-height: normal;
 }
 
@@ -69,24 +74,35 @@ nav div {
 }
 
 .landing-text h1 {
-  font-size: 3rem;
+  font-size: max(1.5rem, 2.5vw);
   font-style: normal;
-  font-weight: 700;
   line-height: normal;
 }
 
 .landing-text h3 {
-  font-size: 1.5rem;
+  font-size: max(0.75rem, 1.25vw);
 }
 
 .landing-text span {
   color: #13B6A7;
-  font-weight: 700;
 }
 
-.landing-text button {
+.landing-text .homeLink {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: #151515;
-  width: 11.625rem;
-  height: 2.9375rem;
+  width: 10vw;
+  height: 5vh;
+  font-style: normal;
+  line-height: normal;
   flex-shrink: 0;
+  border-radius: 0.625rem;
+  border: 2px solid black;
+  transition: 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.landing-text .homeLink:hover {
+  box-shadow: 0px 0px 10px 2.5px rgba(149, 0, 219, 0.75);
 }
