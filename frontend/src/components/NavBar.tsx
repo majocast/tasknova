@@ -14,7 +14,7 @@ function NavBar() {
           <Link to='/'>TaskNova</Link>
           {loggedIn ? 
             <div>
-              <Link to={`/space/1`}>My Space</Link>
+              <Link to={`/myspace/1`}>My Space</Link>
               <Link to={`/account/1`}>Account</Link>
             </div>
             :
