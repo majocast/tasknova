@@ -14,7 +14,7 @@ const NavBar: React.FC<MyNavBarProps> = ({ user_id }) => {
           {user_id ? 
             <div>
               <Link to={`/myspace/${user_id}`}>My Space</Link>
-              <Link to={`/account/1`}>Account</Link>
+              <Link to={`/account/${user_id}`}>Account</Link>
             </div>
             :
             <div>

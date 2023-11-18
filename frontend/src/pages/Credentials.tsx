@@ -19,6 +19,7 @@ function Credentials({ userUpdate }: CredentialsProps) {
 
   return (
     <>
+      <h1>{location.pathname === '/login' ? 'login' : 'register'}</h1>
       <form className='credsForm' action={location.pathname === '/login' ? 'GET' : 'POST'}>
         <label htmlFor='email'>email</label>
         <input name='email' />

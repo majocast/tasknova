@@ -13,7 +13,7 @@ a {
 }
 
 a:hover {
-  color: rgba(149, 0, 219, 0.75);
+  color: #13B6A7;
 }
 
 nav {
@@ -83,8 +83,12 @@ nav div {
   font-size: max(0.75rem, 1.25vw);
 }
 
-.landing-text span {
+.landing-text .cyan {
   color: #13B6A7;
+}
+
+.landing-text .purple {
+  color: rgba(149, 0, 219, 0.75);
 }
 
 .landing-text .homeLink {
