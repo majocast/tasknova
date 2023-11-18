@@ -6,17 +6,12 @@ interface MyNavBarProps {
 }
 
 const NavBar: React.FC<MyNavBarProps> = ({ user_id }) => {
-  const [loggedIn, setLoggedIn] = useState(false);
-
-  useEffect(() => {
-    if(user_id) setLoggedIn(true);
-  }, [user_id])
 
   return (
     <>
       <nav>
           <Link to='/'>TaskNova</Link>
-          {loggedIn ? 
+          {user_id ? 
             <div>
               <Link to={`/myspace/${user_id}`}>My Space</Link>
               <Link to={`/account/1`}>Account</Link>

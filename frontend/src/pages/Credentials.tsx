@@ -1,14 +1,28 @@
-import { useLocation, Location } from 'react-router-dom';
+import { useLocation, Location, useNavigate} from 'react-router-dom';
 
-function Credentials() {
+type UserType = number | null;
+
+interface CredentialsProps {
+  userUpdate: (newUserId: UserType) => void;
+}
+
+function Credentials({ userUpdate }: CredentialsProps) {
   const location: Location<string> = useLocation();
+  const navigate = useNavigate();
+
   console.log(location.pathname)
+
+  function setLogin() {
+    userUpdate(1);
+    navigate('/');
+  }
+
   return (
     <>
       {location.pathname === '/login' ?
-        <div>Login</div>
+        <button onClick={setLogin}>Login</button>
         :
-        <div>Register</div>
+        <button onClick={setLogin}>Register</button>
       }
     </>
   )
