@@ -19,11 +19,20 @@ function Credentials({ userUpdate }: CredentialsProps) {
 
   return (
     <>
-      {location.pathname === '/login' ?
-        <button onClick={setLogin}>Login</button>
-        :
-        <button onClick={setLogin}>Register</button>
-      }
+      <form className='credsForm' action={location.pathname === '/login' ? 'GET' : 'POST'}>
+        <label htmlFor='email'>email</label>
+        <input name='email' />
+        <label htmlFor='password'>password</label>
+        <input name='password' />
+        {location.pathname === '/login' ?
+          <button onClick={setLogin}>Login</button>
+          :
+          <>
+            <label></label>
+            <button type='submit' onClick={setLogin}>Register</button>
+          </>
+        }
+      </form>
     </>
   )
 }
