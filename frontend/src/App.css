@@ -1,4 +1,9 @@
+
+
 #root {
+  --main-color: #213547;
+  --background-secondary: #151515;
+
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -26,10 +31,10 @@ nav {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: #151515; /* Change the background color to your preference */
+  background-color: var(--background-secondary); /* Change the background color to your preference */
   justify-content: space-between;
   border-radius: 0rem 0rem 0.625rem 0.625rem;
-  background: #151515;
+  background: var(--background-secondary);
   box-shadow: 0px 0px 25px 10px rgba(149, 0, 219, 0.75);
 }
 
@@ -83,19 +88,15 @@ nav div {
   font-size: max(0.75rem, 1.25vw);
 }
 
-.landing-text .cyan {
+.landing-text span {
   color: #13B6A7;
-}
-
-.landing-text .purple {
-  color: rgba(149, 0, 219, 0.75);
 }
 
 .landing-text .homeLink {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #151515;
+  background: var(--background-secondary);
   width: 10vw;
   height: 5vh;
   font-style: normal;
@@ -109,4 +110,31 @@ nav div {
 
 .landing-text .homeLink:hover {
   box-shadow: 0px 0px 10px 2.5px rgba(149, 0, 219, 0.75);
+}
+
+.home-info {
+  background: var(--background-secondary);
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 200px; 
+  border-top-left-radius: 50% 80px; 
+  border-top-right-radius: 50% 80px;
+}
+
+.creds-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-header {
+  color: #13B6A7;
+}
+
+.creds-form input {
+  position: relative;
+}
+
+.creds-form label {
+  border: 2px solid white;
 }
