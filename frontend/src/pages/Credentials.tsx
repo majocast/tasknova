@@ -1,24 +1,50 @@
 import { useState } from 'react';
 import { useLocation, Location, useNavigate} from 'react-router-dom';
-import axios from 'axios';
+import axios, {AxiosResponse} from 'axios';
 
 type UserType = number | null;
 type FormType = string | null;
+type UserReturn = {
+    name: string;
+    id: number;
+    email: string;
+    username: string;
+    password: string;
+  }
+
+
+//using this for type validation from FastAPI
+interface DbDataObject {
+  data: UserReturn[]
+}
+
+interface UserData {
+  email: string;
+  password: string;
+}
 
 interface CredentialsProps {
   userUpdate: (newUserId: UserType) => void;
 }
 
 function Credentials({ userUpdate }: CredentialsProps) {
-  const [email, setEmail] = useState<FormType>(null);
-  const [password, setPassword] = useState<FormType>(null);
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [verify, setVerify] = useState<FormType>(null);
   const location: Location<string> = useLocation();
   const navigate = useNavigate();
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    userUpdate(1);
+    const params: UserData = { email, password}
+    if(location.pathname === '/login') {
+      const { data, status } = axios.get<DbDataObject>('http://127.0.0.1:8000/user', { params })
+    } else {
+      const { data, status } = axios.get<DbDataObject>('http://127.0.0.1:8000/user', { params })
+    }
+
+    
+    userUpdate(dbData.data.id);
     navigate('/');
   }
 
