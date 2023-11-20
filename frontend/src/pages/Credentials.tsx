@@ -36,25 +36,32 @@ function Credentials({ userUpdate }: CredentialsProps) {
 
   return (
     <>
-      <h1 className='form-header'>{location.pathname === '/login' ? 'login' : 'register'}</h1>
+      <h1 className='creds-form-header'>{location.pathname === '/login' ? 'login' : 'register'}</h1>
       <form 
         onSubmit={handleSubmit} 
         className='creds-form'
       >
-        <label htmlFor='email'>email</label>
-        <input name='email' onChange={(e) => handleEmailChange(e)}/>
-        <label htmlFor='password'>password</label>
-        <input name='password' onChange={(e) => handlePasswordChange(e)}/>
+        <div className='form-group'>
+          <input name='email' className='form-input' onChange={(e) => handleEmailChange(e)}/>
+          <label htmlFor='email' className='form-label'>email</label>
+        </div>
+        <div className='form-group'>
+          <input name='password' className='form-input' onChange={(e) => handlePasswordChange(e)}/>
+          <label htmlFor='password' className='form-label'>password</label>
+        </div>
         {location.pathname === '/login' ?
           <button type='submit'>Login</button>
           :
           <>
-            <label htmlFor='verify'>verify password</label>
-            <input name='verify' onChange={(e) => handleVerifyChange(e)}/>
+            <div className='form-group'>
+              <input name='verify' className='form-input' onChange={(e) => handleVerifyChange(e)}/>
+              <label htmlFor='verify' className='form-label'>verify password</label>
+            </div>
             <button type='submit'>Register</button>
           </>
         }
       </form>
+      <div>Login with google placeholder</div>
     </>
   )
 }
