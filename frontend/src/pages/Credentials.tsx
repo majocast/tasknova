@@ -19,6 +19,13 @@ interface UserData {
   password: string;
 }
 
+interface RegisterData {
+  email: string;
+  password: string;
+  name: string;
+  username: string;
+}
+
 interface CredentialsProps {
   userUpdate: (newUserId: UserType) => void;
 }
@@ -27,7 +34,8 @@ function Credentials({ userUpdate }: CredentialsProps) {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [verify, setVerify] = useState<string>('');
-  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true)
+  const [username, setUsername] = useState<string>('');
+  const [name, setName] = useState<string>('');
   const location: Location<string> = useLocation();
   const navigate = useNavigate();
 
@@ -45,15 +53,23 @@ function Credentials({ userUpdate }: CredentialsProps) {
   async function handleRegister(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if(password === verify) {
-      const params: UserData = { email, password }
-      const response: AxiosResponse<UserReturn> = await axios.get<UserReturn>('http://127.0.0.1:8000/user', { params })
-      userUpdate(1);
+      const response: AxiosResponse<UserReturn> = await axios.post<UserReturn>('http://127.0.0.1:8000/user', {
+        email: email, 
+        password: password, 
+        name: name, 
+        username: username 
+      })
+      const dbData: UserReturn = response.data;
+      console.log(dbData);
+      userUpdate(dbData.id);
       navigate('/');
     } else {
       alert('passwords do not match')
     }
   }
 
+
+  //handler functions
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   }
@@ -64,6 +80,14 @@ function Credentials({ userUpdate }: CredentialsProps) {
 
   const handleVerifyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setVerify(event.target.value);
+  }
+
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  }
+
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(event.target.value);
   }
 
   return (
@@ -104,6 +128,26 @@ function Credentials({ userUpdate }: CredentialsProps) {
                 onChange={(e) => handleVerifyChange(e)}
               />
               <label htmlFor='verify' className='form-label'>verify password</label>
+            </div>
+            <div className='form-group'>
+              <input 
+                type='text'
+                name='username' 
+                className='form-input' 
+                onChange={(e) => handleUsernameChange(e)}
+                required
+              />
+              <label htmlFor='username' className='form-label'>username</label>
+            </div>
+            <div className='form-group'>
+              <input 
+                type='text'
+                name='name'
+                className='form-input'
+                onChange={(e) => handleNameChange(e)}
+                required
+              />
+              <label htmlFor='name' className='form-label'>your name</label>
             </div>
             <button type='submit'>Register</button>
           </>
