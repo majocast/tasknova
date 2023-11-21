@@ -1,5 +1,6 @@
 #main server file that serves the db connection and handles routing
 from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional, Annotated
 from pydantic import BaseModel
 from database import engine, SessionLocal
@@ -8,6 +9,15 @@ import models
 
 #app initialization
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Replace with frontend's URL(s)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 models.Base.metadata.create_all(bind=engine)
 
 #helper function to prepopulate statuses table if empty for whatever reason

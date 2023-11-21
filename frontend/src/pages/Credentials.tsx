@@ -4,18 +4,14 @@ import axios, {AxiosResponse} from 'axios';
 
 type UserType = number | null;
 type FormType = string | null;
-type UserReturn = {
-    name: string;
-    id: number;
-    email: string;
-    username: string;
-    password: string;
-  }
-
 
 //using this for type validation from FastAPI
-interface DbDataObject {
-  data: UserReturn[]
+interface UserReturn {
+  name: string;
+  id: number;
+  email: string;
+  username: string;
+  password: string;
 }
 
 interface UserData {
@@ -30,22 +26,32 @@ interface CredentialsProps {
 function Credentials({ userUpdate }: CredentialsProps) {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [verify, setVerify] = useState<FormType>(null);
+  const [verify, setVerify] = useState<string>('');
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true)
   const location: Location<string> = useLocation();
   const navigate = useNavigate();
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const params: UserData = { email, password}
-    if(location.pathname === '/login') {
-      const { data, status } = axios.get<DbDataObject>('http://127.0.0.1:8000/user', { params })
-    } else {
-      const { data, status } = axios.get<DbDataObject>('http://127.0.0.1:8000/user', { params })
-    }
+    const params: UserData = { email, password }
+    const response: AxiosResponse<UserReturn> = await axios.get<UserReturn>('http://127.0.0.1:8000/user', { params })
 
-    
-    userUpdate(dbData.data.id);
+    const dbData: UserReturn = response.data;
+    console.log(dbData)
+    userUpdate(dbData.id);
     navigate('/');
+  }
+
+  async function handleRegister(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if(password === verify) {
+      const params: UserData = { email, password }
+      const response: AxiosResponse<UserReturn> = await axios.get<UserReturn>('http://127.0.0.1:8000/user', { params })
+      userUpdate(1);
+      navigate('/');
+    } else {
+      alert('passwords do not match')
+    }
   }
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,15 +70,26 @@ function Credentials({ userUpdate }: CredentialsProps) {
     <>
       <h1 className='creds-form-header'>{location.pathname === '/login' ? 'login' : 'register'}</h1>
       <form 
-        onSubmit={handleSubmit} 
+        onSubmit={location.pathname === '/login' ? handleLogin : handleRegister} 
         className='creds-form'
       >
         <div className='form-group'>
-          <input name='email' className='form-input' onChange={(e) => handleEmailChange(e)}/>
+          <input
+            name='email'
+            className='form-input'
+            onChange={(e) => handleEmailChange(e)}
+            required
+          />
           <label htmlFor='email' className='form-label'>email</label>
         </div>
         <div className='form-group'>
-          <input name='password' className='form-input' onChange={(e) => handlePasswordChange(e)}/>
+          <input
+            type='password'
+            name='password'
+            className='form-input'
+            onChange={(e) => handlePasswordChange(e)}
+            required  
+          />
           <label htmlFor='password' className='form-label'>password</label>
         </div>
         {location.pathname === '/login' ?
@@ -80,7 +97,12 @@ function Credentials({ userUpdate }: CredentialsProps) {
           :
           <>
             <div className='form-group'>
-              <input name='verify' className='form-input' onChange={(e) => handleVerifyChange(e)}/>
+              <input 
+                type='password'
+                name='verify' 
+                className='form-input' 
+                onChange={(e) => handleVerifyChange(e)}
+              />
               <label htmlFor='verify' className='form-label'>verify password</label>
             </div>
             <button type='submit'>Register</button>

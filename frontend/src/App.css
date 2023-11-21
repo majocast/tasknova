@@ -148,6 +148,7 @@ nav div {
   height: 2.5rem;
   border-radius: 10px;
   background: #000;
+  color: var(--text-secondary);
   border: none;
   transition: 0.1s ease-in-out;
 }
