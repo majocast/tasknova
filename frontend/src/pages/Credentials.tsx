@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useLocation, Location, useNavigate} from 'react-router-dom';
-import axios, {AxiosResponse} from 'axios';
+import { useLocation, Location, useNavigate, Link } from 'react-router-dom';
+import axios, { AxiosResponse } from 'axios';
 
 type UserType = number | null;
 
@@ -84,6 +84,7 @@ function Credentials({ userUpdate }: CredentialsProps) {
 
   return (
     <>
+      <Link to='/' className='home-button'>Back to Home</Link>
       <h1 className='creds-form-header'>{location.pathname === '/login' ? 'login' : 'register'}</h1>
       <form 
         onSubmit={location.pathname === '/login' ? handleLogin : handleRegister} 
@@ -109,7 +110,11 @@ function Credentials({ userUpdate }: CredentialsProps) {
           <label htmlFor='password' className='form-label'>password</label>
         </div>
         {location.pathname === '/login' ?
-          <button type='submit'>Login</button>
+          <>
+            <button type='submit'>Login</button>
+            <span>OR</span>
+            <Link to='/register'>Register</Link>
+          </>
           :
           <>
             <div className='form-group'>
@@ -142,6 +147,8 @@ function Credentials({ userUpdate }: CredentialsProps) {
               <label htmlFor='name' className='form-label'>your name</label>
             </div>
             <button type='submit'>Register</button>
+            <span>OR</span>
+            <Link to='/login'>Login</Link>
           </>
         }
       </form>
