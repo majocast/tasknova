@@ -84,7 +84,7 @@ function Credentials({ userUpdate }: CredentialsProps) {
 
   return (
     <>
-      <Link to='/' className='home-button'>Back to Home</Link>
+      <Link to='/' className='home-button'>Back to Home Base</Link>
       <h1 className='creds-form-header'>{location.pathname === '/login' ? 'login' : 'register'}</h1>
       <form 
         onSubmit={location.pathname === '/login' ? handleLogin : handleRegister} 

@@ -113,8 +113,6 @@ async def login_user(email: str, password: str, db: db_dependency):
 #registration
 @app.post('/user', status_code=status.HTTP_201_CREATED) #done
 async def register_user(user: UserBase, db: db_dependency):
-  print('in post')
-  print(user)
   db_user = models.User(**user.model_dump())
   db.add(db_user)
   db.commit()
