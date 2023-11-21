@@ -3,7 +3,6 @@ import { useLocation, Location, useNavigate} from 'react-router-dom';
 import axios, {AxiosResponse} from 'axios';
 
 type UserType = number | null;
-type FormType = string | null;
 
 //using this for type validation from FastAPI
 interface UserReturn {
@@ -17,13 +16,6 @@ interface UserReturn {
 interface UserData {
   email: string;
   password: string;
-}
-
-interface RegisterData {
-  email: string;
-  password: string;
-  name: string;
-  username: string;
 }
 
 interface CredentialsProps {
